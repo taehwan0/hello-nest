@@ -4,8 +4,11 @@ import {
   Delete,
   Get,
   Param,
+  ParseEnumPipe,
   Post,
   Put,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { Board, BoardStatus } from './boards.model';
@@ -21,6 +24,7 @@ export class BoardsController {
   }
 
   @Post('/')
+  @UsePipes(ValidationPipe)
   createBoard(@Body() createBoardDto: CreateBoardDto): Board {
     return this.boardsService.createBoard(createBoardDto);
   }
@@ -33,7 +37,7 @@ export class BoardsController {
   @Put('/:id/status')
   updateBoardStatus(
     @Param('id') id: string,
-    @Body('status') status: BoardStatus,
+    @Body('status', new ParseEnumPipe(BoardStatus)) status: BoardStatus,
   ): Board {
     return this.boardsService.updateBoardStatus(id, status);
   }
