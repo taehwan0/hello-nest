@@ -13,6 +13,7 @@ import {
 import { BoardsService } from './boards.service';
 import { Board, BoardStatus } from './boards.model';
 import { CreateBoardDto } from './dto/create-board.dto';
+import { BoardStatusValidationPipe } from './pipe/board-status-validation.pipe';
 
 @Controller('boards')
 export class BoardsController {
@@ -37,7 +38,7 @@ export class BoardsController {
   @Put('/:id/status')
   updateBoardStatus(
     @Param('id') id: string,
-    @Body('status', new ParseEnumPipe(BoardStatus)) status: BoardStatus,
+    @Body('status', BoardStatusValidationPipe) status: BoardStatus,
   ): Board {
     return this.boardsService.updateBoardStatus(id, status);
   }
