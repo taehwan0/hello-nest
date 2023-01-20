@@ -1,33 +1,23 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Board, BoardStatus } from './boards.model';
-import { v1 as uuid } from 'uuid';
+import { BoardStatus } from './board-status.enum';
 import { CreateBoardDto } from './dto/create-board.dto';
+import { BoardRepository } from './board.repository';
+import { Board } from './board.entity';
 
 @Injectable()
 export class BoardsService {
-  private boards: Board[] = [];
+  constructor(private boardRepository: BoardRepository) {}
 
-  getAllBoards(): Board[] {
-    return this.boards;
+  async getAllBoards(): Promise<Board[]> {
+    return await this.boardRepository.find();
   }
 
-  createBoard(createBoardDto: CreateBoardDto): Board {
-    const { title, description } = createBoardDto;
-
-    const board = {
-      id: uuid(),
-      title: title,
-      description: description,
-      status: BoardStatus.PUBLIC,
-    };
-
-    this.boards.push(board);
-
-    return board;
+  async createBoard(createBoardDto: CreateBoardDto): Promise<Board> {
+    return await this.boardRepository.createBoard(createBoardDto);
   }
 
-  getBoardById(id: string): Board {
-    const board = this.boards.find((board) => board.id === id);
+  async getBoardById(id: number): Promise<Board> {
+    const board = await this.boardRepository.findOneById(id);
 
     if (!board) {
       throw new NotFoundException(`Not Found Board Id: ${id}`);
@@ -36,17 +26,19 @@ export class BoardsService {
     return board;
   }
 
-  updateBoardStatus(id: string, status: BoardStatus): Board {
-    const board: Board = this.getBoardById(id);
+  async updateBoardStatus(id: number, status: BoardStatus): Promise<Board> {
+    const board = await this.getBoardById(id);
 
-    board.status = status;
+    board.updateStatus(status);
 
-    return board;
+    return await this.boardRepository.save(board);
   }
 
-  deleteBoard(id: string): void {
-    const found = this.getBoardById(id);
+  async deleteBoard(id: number): Promise<void> {
+    const result = await this.boardRepository.delete(id);
 
-    this.boards = this.boards.filter((board) => board.id !== found.id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Not Found Board Id: ${id}`);
+    }
   }
 }
