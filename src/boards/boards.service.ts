@@ -3,6 +3,7 @@ import { BoardStatus } from './board-status.enum';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { BoardRepository } from './board.repository';
 import { Board } from './board.entity';
+import { User } from '../auth/user.entity';
 
 @Injectable()
 export class BoardsService {
@@ -12,8 +13,19 @@ export class BoardsService {
     return await this.boardRepository.find();
   }
 
-  async createBoard(createBoardDto: CreateBoardDto): Promise<Board> {
-    return await this.boardRepository.createBoard(createBoardDto);
+  async getAllBoardsByMe(user: User): Promise<Board[]> {
+    const query = this.boardRepository.createQueryBuilder('board');
+
+    query.where('board.userId = :userId', { userId: user.id });
+
+    return query.getMany();
+  }
+
+  async createBoard(
+    createBoardDto: CreateBoardDto,
+    user: User,
+  ): Promise<Board> {
+    return await this.boardRepository.createBoard(createBoardDto, user);
   }
 
   async getBoardById(id: number): Promise<Board> {
@@ -34,11 +46,7 @@ export class BoardsService {
     return await this.boardRepository.save(board);
   }
 
-  async deleteBoard(id: number): Promise<void> {
-    const result = await this.boardRepository.delete(id);
-
-    if (result.affected === 0) {
-      throw new NotFoundException(`Not Found Board Id: ${id}`);
-    }
+  async deleteBoard(id: number, user: User): Promise<void> {
+    return await this.boardRepository.deleteBoardWithAuth(id, user);
   }
 }
