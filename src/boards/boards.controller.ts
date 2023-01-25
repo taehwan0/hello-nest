@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   ParseIntPipe,
   Post,
@@ -23,10 +24,12 @@ import { User } from '../auth/user.entity';
 @Controller('boards')
 @UseGuards(AuthGuard('jwt'))
 export class BoardsController {
+  private logger: Logger = new Logger('BoardsController');
   constructor(private readonly boardsService: BoardsService) {}
 
   @Get('/')
   getAllBoards(): Promise<Board[]> {
+    this.logger.verbose('getAllBoards');
     return this.boardsService.getAllBoards();
   }
 
