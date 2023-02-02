@@ -3,12 +3,14 @@ import { UserRepository } from './user.repository';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
+import { KakaoClient } from './kakao.client';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userRepository: UserRepository,
     private jwtService: JwtService,
+    private kakaoClient: KakaoClient,
   ) {}
 
   async signUp(authCredentialDto: AuthCredentialDto): Promise<void> {
@@ -33,5 +35,9 @@ export class AuthService {
       return { accessToken: accessToken };
     }
     throw new UnauthorizedException('login failed');
+  }
+
+  async loginKakao(code: string): Promise<string> {
+    return this.kakaoClient.getAccessToken(code);
   }
 }

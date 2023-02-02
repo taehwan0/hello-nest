@@ -8,12 +8,15 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
 import * as config from 'config';
+import { HttpModule } from '@nestjs/axios';
+import { ConfigModule } from '@nestjs/config';
+import { KakaoClient } from './kakao.client';
 
 const jwtConfig = config.get('jwt');
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, UserRepository, JwtStrategy],
+  providers: [AuthService, UserRepository, JwtStrategy, KakaoClient],
   imports: [
     PassportModule.register({
       defaultStrategy: 'jwt',
@@ -25,6 +28,8 @@ const jwtConfig = config.get('jwt');
       },
     }),
     TypeOrmModule.forFeature([User]),
+    ConfigModule.forRoot(),
+    HttpModule,
   ],
   exports: [PassportModule, JwtStrategy],
 })

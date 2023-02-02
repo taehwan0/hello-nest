@@ -2,7 +2,9 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
+  Query,
   Req,
   UseGuards,
   ValidationPipe,
@@ -12,6 +14,7 @@ import { AuthCredentialDto } from './dto/auth-credential.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from './user.entity';
 import { GetUser } from './get-user.decorator';
+import { getDataSourceToken } from '@nestjs/typeorm';
 
 @Controller('auth')
 export class AuthController {
@@ -35,5 +38,10 @@ export class AuthController {
   @UseGuards(AuthGuard())
   test(@GetUser() user: User) {
     console.log('user: ', user);
+  }
+
+  @Get('/kakao/login')
+  async kakaoLogin(@Query('code') code: string): Promise<string> {
+    return this.authService.loginKakao(code);
   }
 }
