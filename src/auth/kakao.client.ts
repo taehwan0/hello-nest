@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
+import { SocialInfoDto } from './dto/social-info.dto';
 
 @Injectable()
 export class KakaoClient {
@@ -26,15 +27,30 @@ export class KakaoClient {
       code: code,
     };
 
-    const options = {
+    const header = {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
       },
     };
     const response = await firstValueFrom(
-      this.httpService.post(this.REQUEST_TOKEN_URL, body, options),
+      this.httpService.post(this.REQUEST_TOKEN_URL, body, header),
     );
 
     return response.data.access_token;
+  }
+
+  async getSocialInfo(accessToken: string): Promise<SocialInfoDto> {
+    const header = {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+
+    const response = await firstValueFrom(
+      this.httpService.get(this.REQUEST_USER_INFO_URL, header),
+    );
+
+    return SocialInfoDto.byKakao(response);
   }
 }
