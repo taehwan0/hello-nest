@@ -11,12 +11,20 @@ import * as config from 'config';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
 import { KakaoClient } from './kakao.client';
+import { MemberRepository } from './member.repository';
+import { Member } from './member.entity';
 
 const jwtConfig = config.get('jwt');
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, UserRepository, JwtStrategy, KakaoClient],
+  providers: [
+    AuthService,
+    UserRepository,
+    MemberRepository,
+    JwtStrategy,
+    KakaoClient,
+  ],
   imports: [
     PassportModule.register({
       defaultStrategy: 'jwt',
@@ -27,7 +35,7 @@ const jwtConfig = config.get('jwt');
         expiresIn: jwtConfig.expiresIn,
       },
     }),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Member]),
     ConfigModule.forRoot(),
     HttpModule,
   ],

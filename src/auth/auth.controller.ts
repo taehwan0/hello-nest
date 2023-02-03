@@ -15,6 +15,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { User } from './user.entity';
 import { GetUser } from './get-user.decorator';
 import { getDataSourceToken } from '@nestjs/typeorm';
+import { Member } from './member.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -41,7 +42,7 @@ export class AuthController {
   }
 
   @Get('/kakao/login')
-  async kakaoLogin(@Query('code') code: string): Promise<string> {
+  async kakaoLogin(@Query('code') code: string): Promise<Member> {
     return this.authService.loginKakao(code);
   }
 }

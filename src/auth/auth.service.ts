@@ -4,11 +4,14 @@ import { AuthCredentialDto } from './dto/auth-credential.dto';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { KakaoClient } from './kakao.client';
+import { MemberRepository } from './member.repository';
+import { Member } from './member.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userRepository: UserRepository,
+    private memberRepository: MemberRepository,
     private jwtService: JwtService,
     private kakaoClient: KakaoClient,
   ) {}
@@ -37,7 +40,19 @@ export class AuthService {
     throw new UnauthorizedException('login failed');
   }
 
-  async loginKakao(code: string): Promise<string> {
-    return this.kakaoClient.getAccessToken(code);
+  async loginKakao(code: string): Promise<Member> {
+    const accessToken = await this.kakaoClient.getAccessToken(code);
+    const socialInfo = await this.kakaoClient.getSocialInfo(accessToken);
+
+    const member = await this.memberRepository.findOneBy({
+      socialType: socialInfo.socialType,
+      socialId: socialInfo.socialId,
+    });
+
+    if (member) {
+      return member;
+    } else {
+      return await this.memberRepository.createMember(socialInfo);
+    }
   }
 }
