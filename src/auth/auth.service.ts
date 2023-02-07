@@ -6,6 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { KakaoClient } from './kakao.client';
 import { MemberRepository } from './member.repository';
 import { Member } from './member.entity';
+import { GithubClient } from './github.client';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +15,7 @@ export class AuthService {
     private memberRepository: MemberRepository,
     private jwtService: JwtService,
     private kakaoClient: KakaoClient,
+    private githubClient: GithubClient,
   ) {}
 
   async signUp(authCredentialDto: AuthCredentialDto): Promise<void> {
@@ -54,5 +56,9 @@ export class AuthService {
     } else {
       return await this.memberRepository.createMember(socialInfo);
     }
+  }
+
+  async loginGithub(code: string): Promise<any> {
+    return await this.githubClient.getAccessToken(code);
   }
 }

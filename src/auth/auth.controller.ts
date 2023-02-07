@@ -43,6 +43,11 @@ export class AuthController {
 
   @Get('/kakao/login')
   async kakaoLogin(@Query('code') code: string): Promise<Member> {
-    return this.authService.loginKakao(code);
+    return await this.authService.loginKakao(code);
+  }
+
+  @Get('/github/login')
+  async githubLogin(@Query('code') code: string): Promise<any> {
+    return await this.authService.loginGithub(code);
   }
 }
