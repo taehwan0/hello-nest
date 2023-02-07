@@ -7,10 +7,9 @@ import { SocialInfoDto } from './dto/social-info.dto';
 @Injectable()
 export class GithubClient {
   private REQUEST_TOKEN_URL = 'https://github.com/login/oauth/access_token';
-  private REQUEST_USER_INFO_URL = 'https://kapi.kakao.com/v2/user/me';
+  private REQUEST_USER_INFO_URL = 'https://api.github.com/user';
 
   private CLIENT_ID = this.configService.get('GITHUB_CLIENT_ID');
-  private REDIRECT_URL = this.configService.get('GITHUB_REDIRECT_URL');
   private SECRET_KEY = this.configService.get('GITHUB_SECRET_KEY');
 
   constructor(
@@ -40,10 +39,12 @@ export class GithubClient {
     return response.data.access_token;
   }
 
-  async getSocialInfo(accessToken: string): Promise<SocialInfoDto> {
+  async getSocialInfo(accessToken: string): Promise<any> {
     const header = {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+        'X-GitHub-Api-Version': '2022-11-28',
+        Accept: 'application/vnd.github+json',
         Authorization: `Bearer ${accessToken}`,
       },
     };
@@ -52,6 +53,6 @@ export class GithubClient {
       this.httpService.get(this.REQUEST_USER_INFO_URL, header),
     );
 
-    return SocialInfoDto.byKakao(response);
+    return SocialInfoDto.byGitHub(response);
   }
 }

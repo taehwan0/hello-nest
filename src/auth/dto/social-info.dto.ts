@@ -29,4 +29,17 @@ export class SocialInfoDto {
 
     return new SocialInfoDto(SocialType.KAKAO, socialId, name, profileImageUrl);
   }
+
+  static byGitHub(httpResponse) {
+    const socialId = httpResponse.data.id;
+    const name = httpResponse.data.name;
+    const profileImageUrl = httpResponse.data.avatar_url;
+
+    return new SocialInfoDto(
+      SocialType.GITHUB,
+      socialId,
+      name,
+      profileImageUrl,
+    );
+  }
 }

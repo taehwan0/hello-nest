@@ -47,7 +47,7 @@ export class AuthController {
   }
 
   @Get('/github/login')
-  async githubLogin(@Query('code') code: string): Promise<any> {
+  async githubLogin(@Query('code') code: string): Promise<Member> {
     return await this.authService.loginGithub(code);
   }
 }
