@@ -13,6 +13,7 @@ import { ConfigModule } from '@nestjs/config';
 import { KakaoClient } from './kakao.client';
 import { MemberRepository } from './member.repository';
 import { Member } from './member.entity';
+import { GithubClient } from './github.client';
 
 const jwtConfig = config.get('jwt');
 
@@ -24,6 +25,7 @@ const jwtConfig = config.get('jwt');
     MemberRepository,
     JwtStrategy,
     KakaoClient,
+    GithubClient,
   ],
   imports: [
     PassportModule.register({
