@@ -3,9 +3,10 @@ import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import { SocialInfoDto } from './dto/social-info.dto';
+import { OauthClient } from './oauth.client';
 
 @Injectable()
-export class KakaoClient {
+export class KakaoClient implements OauthClient {
   private REQUEST_TOKEN_URL = 'https://kauth.kakao.com/oauth/token';
   private REQUEST_USER_INFO_URL = 'https://kapi.kakao.com/v2/user/me';
 

@@ -1,5 +1,5 @@
 export enum SocialType {
-  KAKAO,
-  NAVER,
-  GITHUB,
+  KAKAO = 'KAKAO',
+  NAVER = 'NAVER',
+  GITHUB = 'GITHUB',
 }

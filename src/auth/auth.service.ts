@@ -3,11 +3,11 @@ import { UserRepository } from './user.repository';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
-import { KakaoClient } from './kakao.client';
 import { MemberRepository } from './member.repository';
 import { Member } from './member.entity';
-import { GithubClient } from './github.client';
 import { SocialInfoDto } from './dto/social-info.dto';
+import { OauthFactory } from './oauth.factory';
+import { SocialType } from './social.type';
 
 @Injectable()
 export class AuthService {
@@ -15,8 +15,7 @@ export class AuthService {
     private userRepository: UserRepository,
     private memberRepository: MemberRepository,
     private jwtService: JwtService,
-    private kakaoClient: KakaoClient,
-    private githubClient: GithubClient,
+    private oauthFactory: OauthFactory,
   ) {}
 
   async signUp(authCredentialDto: AuthCredentialDto): Promise<void> {
@@ -44,15 +43,27 @@ export class AuthService {
   }
 
   async loginKakao(code: string): Promise<Member> {
-    const accessToken = await this.kakaoClient.getAccessToken(code);
-    const socialInfo = await this.kakaoClient.getSocialInfo(accessToken);
+    const accessToken = await this.oauthFactory.getAccessToken(
+      SocialType.KAKAO,
+      code,
+    );
+    const socialInfo = await this.oauthFactory.getSocialInfo(
+      SocialType.KAKAO,
+      accessToken,
+    );
 
     return await this.signUpAndIn(socialInfo);
   }
 
   async loginGithub(code: string): Promise<any> {
-    const accessToken = await this.githubClient.getAccessToken(code);
-    const socialInfo = await this.githubClient.getSocialInfo(accessToken);
+    const accessToken = await this.oauthFactory.getAccessToken(
+      SocialType.GITHUB,
+      code,
+    );
+    const socialInfo = await this.oauthFactory.getSocialInfo(
+      SocialType.GITHUB,
+      accessToken,
+    );
 
     return await this.signUpAndIn(socialInfo);
   }

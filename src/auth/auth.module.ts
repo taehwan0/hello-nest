@@ -14,6 +14,7 @@ import { KakaoClient } from './kakao.client';
 import { MemberRepository } from './member.repository';
 import { Member } from './member.entity';
 import { GithubClient } from './github.client';
+import { OauthFactory } from './oauth.factory';
 
 const jwtConfig = config.get('jwt');
 
@@ -24,6 +25,7 @@ const jwtConfig = config.get('jwt');
     UserRepository,
     MemberRepository,
     JwtStrategy,
+    OauthFactory,
     KakaoClient,
     GithubClient,
   ],

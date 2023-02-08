@@ -3,9 +3,10 @@ import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import { SocialInfoDto } from './dto/social-info.dto';
+import { OauthClient } from './oauth.client';
 
 @Injectable()
-export class GithubClient {
+export class GithubClient implements OauthClient {
   private REQUEST_TOKEN_URL = 'https://github.com/login/oauth/access_token';
   private REQUEST_USER_INFO_URL = 'https://api.github.com/user';
 
