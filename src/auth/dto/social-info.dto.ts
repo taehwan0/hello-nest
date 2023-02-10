@@ -19,9 +19,6 @@ export class SocialInfoDto {
   }
 
   static byKakao(httpResponse) {
-    // console.log(httpResponse);
-    // console.log(httpResponse.data.kakao_account.profile);
-
     const socialId = httpResponse.data.id;
     const name = httpResponse.data.kakao_account.profile.nickname;
     const profileImageUrl =

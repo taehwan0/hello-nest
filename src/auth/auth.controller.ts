@@ -2,10 +2,8 @@ import {
   Body,
   Controller,
   Get,
-  Param,
   Post,
   Query,
-  Req,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -14,8 +12,8 @@ import { AuthCredentialDto } from './dto/auth-credential.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from './user.entity';
 import { GetUser } from './get-user.decorator';
-import { getDataSourceToken } from '@nestjs/typeorm';
 import { Member } from './member.entity';
+import { SocialType } from './social.type';
 
 @Controller('auth')
 export class AuthController {
@@ -43,11 +41,11 @@ export class AuthController {
 
   @Get('/kakao/login')
   async kakaoLogin(@Query('code') code: string): Promise<Member> {
-    return await this.authService.loginKakao(code);
+    return await this.authService.login(SocialType.KAKAO, code);
   }
 
   @Get('/github/login')
   async githubLogin(@Query('code') code: string): Promise<Member> {
-    return await this.authService.loginGithub(code);
+    return await this.authService.login(SocialType.GITHUB, code);
   }
 }

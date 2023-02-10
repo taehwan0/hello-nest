@@ -8,6 +8,7 @@ import { Member } from './member.entity';
 import { SocialInfoDto } from './dto/social-info.dto';
 import { OauthFactory } from './oauth.factory';
 import { SocialType } from './social.type';
+import { OauthClient } from './oauth.client';
 
 @Injectable()
 export class AuthService {
@@ -42,28 +43,11 @@ export class AuthService {
     throw new UnauthorizedException('login failed');
   }
 
-  async loginKakao(code: string): Promise<Member> {
-    const accessToken = await this.oauthFactory.getAccessToken(
-      SocialType.KAKAO,
-      code,
-    );
-    const socialInfo = await this.oauthFactory.getSocialInfo(
-      SocialType.KAKAO,
-      accessToken,
-    );
+  async login(socialType: SocialType, code: string): Promise<Member> {
+    const oauthClient: OauthClient = this.oauthFactory.getClient(socialType);
 
-    return await this.signUpAndIn(socialInfo);
-  }
-
-  async loginGithub(code: string): Promise<any> {
-    const accessToken = await this.oauthFactory.getAccessToken(
-      SocialType.GITHUB,
-      code,
-    );
-    const socialInfo = await this.oauthFactory.getSocialInfo(
-      SocialType.GITHUB,
-      accessToken,
-    );
+    const accessToken = await oauthClient.getAccessToken(code);
+    const socialInfo = await oauthClient.getSocialInfo(accessToken);
 
     return await this.signUpAndIn(socialInfo);
   }
